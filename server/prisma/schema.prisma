@@ -10,132 +10,154 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Usuario {
   id      String      @id @default(uuid())
   email   String   @unique
-  name    String
-  user    String
-  password   String 
+  nome    String
+  usuario    String
+  senha   String 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  characters Character[] @relation("user")
+  personagens Personagem[] @relation("usuario")
 
-  @@map("users")
+  @@map("usuario")
 }
 
-model Spell {
+model Magia {
   id String @id @default(uuid())
-  name String
-  typeSpell String
+  nome String
+  tipoMagia String
   level String
-  typeAction String
-  range String
-  conjuration String
-  time Int?
+  dano String?
+  tipoAcao String
+  distancia String
+  areaEfeito String?
+  tipoConjuracao String
+  duracao Int?
   material String?
-  description String?
-  carSpell CharSpell[] @relation("spell")
+  descricao String?
+  perMagia PersoMagia[] @relation("magia")
 
-  @@map("spells")
+  @@map("magia")
 }
 
-model Equipment {
+model Equipamento {
   id String @id @default(uuid())
-  name String
-  price Decimal?
+  nome String
+  preco Decimal?
   ca Int?
-  stealth String?
-  damage String?
-  type String?
-  properties String?
-  charEquip CharEquip[] @relation("equipment")
+  furtividade String?
+  dano String?
+  tipo String?
+  propriedade String?
+  raridade String?
+  descricao String?
+  perEquip PersoEquip[] @relation("equipamento")
 
-  @@map("equipment")
+  @@map("equipamento")
 }
 
-model Race {
+model Raca {
   id String @id @default(uuid())
-  name String
-  abilityScore String?
-  Proficiency String?
-  characters Character[] @relation("race")
-  subRace SubRace[] @relation("subRace")
+  nome String
+  pontosHabilidade String?
+  proficiencia String?
+  efeito String?
+  descricao String?
+  personagens Personagem[] @relation("raca")
+  subRaca SubRaca[] @relation("subRaca")
 
-  @@map("races")
+  @@map("raca")
 }
 
-model SubRace {
+model SubRaca {
   id String @id @default(uuid())
-  name String
-  abilityScore String?
-  Proficiency String?
+  nome String
+  pontosHabilidade String?
+  proficiencia String?
+  efeito String?
+  descricao String?
 
-  race Race @relation("subRace", fields: [raceId], references: [id])
-  raceId String
-  @@map("subRaces")
+  raca Raca @relation("subRaca", fields: [racaId], references: [id])
+  racaId String
+  @@map("subRaca")
 }
 
-model Class {
+model Classe {
   id String @id @default(uuid())
-  name String
-  hitPoint String
-  armor String
-  weapons String
-  tools String
-  savingThrows String
-  characters Character[] @relation("class")
+  nome String
+  pontosVida String
+  proficienciaArmardura String
+  proficienciaArma String
+  proficienciaFerramenta String
+  testeSalvamento String
+  pontosProeficiencia Int?
+  forca Int?
+  destreza Int?
+  constituicao Int?
+  inteligencia Int?
+  sabedoria Int?
+  carisma Int?
+  personagem Personagem[] @relation("classe")
 
-  @@map("classes")
+  @@map("classe")
 }
 
-model Character {
+model Personagem {
   id String @id @default(uuid())
-  name String
+  nome String
   level Int
-  experience Int?
-  age Int?
-  height Int?
-  weight Int?
-  skin String?
-  eye String?
-  hair String?
-  appearance String?
-  backstory String?
-  background String?
-  alignment String?
-  ideals String?
-  links String?
-  weaknesses String?
-  Gold Int?
-  charSpell CharSpell[] @relation("character")
-  charEquip CharEquip[] @relation("character")
+  experiencia Int?
+  idade Int?
+  altura Int?
+  peso Int?
+  pele String?
+  olho String?
+  cabelo String?
+  aparencia String?
+  historia String?
+  antecedente String?
+  alinhamento String?
+  ideal String?
+  vinculo String?
+  fraqueza String?
+  ouro Int?
+  condicao String?
+  forca Int?
+  destreza Int?
+  constituicao Int?
+  inteligencia Int?
+  sabedoria Int?
+  carisma Int?
+  perMagia PersoMagia[] @relation("personagem")
+  perEquip PersoEquip[] @relation("personagem")
 
-  user User @relation("user", fields: [userId], references: [id])
-  userId String
-  race Race @relation("race", fields: [raceId], references: [id])
-  raceId String
-  class Class @relation("class", fields: [classId], references: [id])
-  classId String
+  usuario Usuario @relation("usuario", fields: [usuarioId], references: [id])
+  usuarioId String
+  raca Raca @relation("raca", fields: [racaId], references: [id])
+  racaId String
+  classe Classe @relation("classe", fields: [classeId], references: [id])
+  classeId String
 
-  @@map("characters")
+  @@map("personagem")
 }
 
-model CharSpell {
-  character Character @relation("character", fields: [charId], references: [id])
-  charId String 
-  spell Spell @relation("spell", fields: [spellId], references: [id])
-  spellId String
+model PersoMagia {
+  personagem Personagem @relation("personagem", fields: [persoId], references: [id])
+  persoId String 
+  magia Magia @relation("magia", fields: [magiaId], references: [id])
+  magiaId String
 
-  @@id([charId,spellId])
-  @@map("charSpells")
+  @@id([persoId,magiaId])
+  @@map("persoMagia")
 }
 
-model CharEquip {
-  character Character @relation("character", fields: [charId], references: [id])
-  charId String
-  equipment Equipment @relation("equipment", fields: [equipId], references: [id])
+model PersoEquip {
+  personagem Personagem @relation("personagem", fields: [persoId], references: [id])
+  persoId String
+  equipamento Equipamento @relation("equipamento", fields: [equipId], references: [id])
   equipId String
 
-  @@id([charId,equipId])
-  @@map("charEquip")
+  @@id([persoId,equipId])
+  @@map("persoEquip")
 }
